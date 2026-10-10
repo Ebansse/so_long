@@ -45,3 +45,10 @@ void	clear_array_img(t_game *game, t_img **imgs)
 	}
 	free(arr);
 }
+
+int	error(char *msg)
+{
+	ft_putstr_fd("Error\n", 2);
+	ft_putendl_fd(msg, 2);
+	return (1);
+}

@@ -80,6 +80,7 @@ typedef struct t_data
 }	t_data;
 
 int		key_press(int keycode, t_data *data);
+int		error(char *msg);
 
 char	**remplir_tableau(char **map, int fd);
 char	**tableau_map(t_map *map);
@@ -90,6 +91,7 @@ int		rectangle_check(t_map *map);
 void	flood_fill(t_map *map, int x, int y);
 int		exit_check(t_map *map);
 int		map_check(t_map *map, t_game *game);
+void	free_all(t_data *data);
 int		finish(t_data *data);
 
 void	display_map(t_game *game, t_map *map);

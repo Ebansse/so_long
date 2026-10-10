@@ -80,7 +80,8 @@ int	move(int keycode, t_data *data)
 {
 	if (!data || !data->game)
 		return (0);
-	else if ((keycode == 119 || keycode == 65362))
+	data->game->print_step = 0;
+	if ((keycode == 119 || keycode == 65362))
 		render_top(data);
 	else if ((keycode == 115 || keycode == 65364))
 		render_bottom(data);

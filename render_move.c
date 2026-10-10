@@ -18,19 +18,8 @@ int	chk_item(t_data *data, char c)
 	{
 		put_image(data->map->img_map, data->map->sprites_array[1],
 			data->pos_x * data->game->width, data->pos_y * data->game->height);
-		put_image(data->map->img_map, data->map->sprites_array[3],
-			data->pos_x * data->game->width, data->pos_y * data->game->height);
-		display_map(data->game, data->map);
-		data->map->map[data->pos_y][data->pos_x] = 'N';
+		data->map->map[data->pos_y][data->pos_x] = '0';
 		data->map->item--;
-		return (1);
-	}
-	else if (c == 'N')
-	{
-		put_image(data->map->img_map, data->map->sprites_array[1],
-			data->pos_x * data->game->width, data->pos_y * data->game->height);
-		display_map(data->game, data->map);
-		return (0);
 	}
 	return (0);
 }
@@ -47,7 +36,7 @@ void	render_top(t_data *data)
 			if (data->map->item == 0)
 			{
 				ft_printf("Felicitation vous avez gagne en : %i coup !\n",
-					data->game->perso_step);
+					data->game->perso_step + 1);
 				finish(data);
 				return ;
 			}
@@ -76,7 +65,7 @@ void	render_bottom(t_data *data)
 			if (data->map->item == 0)
 			{
 				ft_printf("Felicitation vous avez gagne en : %i coup !\n",
-					data->game->perso_step);
+					data->game->perso_step + 1);
 				finish(data);
 				return ;
 			}
@@ -105,7 +94,7 @@ void	render_left(t_data *data)
 			if (data->map->item == 0)
 			{
 				ft_printf("Felicitation vous avez gagne en : %i coup !\n",
-					data->game->perso_step);
+					data->game->perso_step + 1);
 				finish(data);
 				return ;
 			}
@@ -134,7 +123,7 @@ void	render_right(t_data *data)
 			if (data->map->item == 0)
 			{
 				ft_printf("Felicitation vous avez gagne en : %i coup !\n",
-					data->game->perso_step);
+					data->game->perso_step + 1);
 				finish(data);
 				return ;
 			}

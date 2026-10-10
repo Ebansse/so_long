@@ -41,6 +41,7 @@ char	**tableau_map(t_map *map)
 	while (line != NULL)
 	{
 		map->line_map++;
+		free(line);
 		line = get_next_line(fd);
 	}
 	close(fd);
@@ -113,7 +114,7 @@ int	rectangle_check(t_map *map)
 	while (j < map->line_map)
 	{
 		len = ft_strlen((const char *)map->map[j]);
-		if (j == map->line_map - 1)
+		if (j == map->line_map - 1 && map->map[j][len - 1] != '\n')
 			len++;
 		if (len != map->cols)
 			return (0);

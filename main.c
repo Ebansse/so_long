@@ -18,13 +18,18 @@ void	init_map_values(t_map *map)
 	map->exit = 0;
 	map->item = 0;
 	map->valid = 1;
-	map->cols = ft_strlen((const char *)map->map[0]);
+	map->cols = 0;
+	if (map->map && map->map[0])
+		map->cols = ft_strlen((const char *)map->map[0]);
 }
 
 void	initialisation(t_game *game, t_map *map, t_img *img, t_data *data)
 {
-	game->mlx_ptr = mlx_init();
+	game->win_ptr = NULL;
 	game->perso_step = 0;
+	game->print_step = 0;
+	map->img_map = NULL;
+	map->copy_map = NULL;
 	map->map = tableau_map(map);
 	init_map_values(map);
 	map->sprites_array = load_sprites(game, "./assets/", 6);
@@ -57,16 +62,15 @@ int	check_ber(t_map *map, char *str)
 	int	fd;
 	int	len;
 
-	fd = open(str, O_RDONLY);
 	len = ft_strlen((const char *)str);
-	if (fd < 0 || str[len - 1] != 'r' || str[len - 2] != 'e'
-		|| str[len - 3] != 'b' || str[len - 4] != '.')
+	if (len < 5 || ft_strncmp(str + len - 4, ".ber", 4) != 0
+		|| str[len - 5] == '/')
 		return (0);
-	else
-	{
-		map->path_map = str;
-		close(fd);
-	}
+	fd = open(str, O_RDONLY);
+	if (fd < 0)
+		return (0);
+	close(fd);
+	map->path_map = str;
 	return (1);
 }
 
@@ -78,23 +82,22 @@ int	main(int argc, char	**argv)
 	t_data	data;
 
 	if (argc != 2 || !check_ber(&map, argv[1]))
+		return (error("Usage: ./so_long <existing_map.ber>"));
+	game.mlx_ptr = mlx_init();
+	if (!game.mlx_ptr)
+		return (error("mlx_init failed"));
+	initialisation(&game, &map, &img, &data);
+	if (!map_check(&map, &game))
 	{
-		ft_printf("Veuillez renseignez une map existante en .ber ;)\n");
-		return (0);
+		free_all(&data);
+		return (error("Invalid map"));
 	}
-	else
-	{
-		initialisation(&game, &map, &img, &data);
-		if (map_check(&map, &game))
-		{
-			game.win_ptr = mlx_new_window(game.mlx_ptr,
-					game.win_w, game.win_h, "so_long");
-			map.img_map = new_image(game.mlx_ptr, game.win_w, game.win_h);
-			create_map(&game, &map);
-			mlx_key_hook(game.win_ptr, key_press, &data);
-			mlx_hook(game.win_ptr, 17, 0, finish, &data);
-			mlx_loop(game.mlx_ptr);
-		}
-	}
-	return (1);
+	game.win_ptr = mlx_new_window(game.mlx_ptr,
+			game.win_w, game.win_h, "so_long");
+	map.img_map = new_image(game.mlx_ptr, game.win_w, game.win_h);
+	create_map(&game, &map);
+	mlx_key_hook(game.win_ptr, key_press, &data);
+	mlx_hook(game.win_ptr, 17, 0, finish, &data);
+	mlx_loop(game.mlx_ptr);
+	return (0);
 }

@@ -12,7 +12,7 @@
 
 #include "so_long.h"
 
-int	finish(t_data *data)
+void	free_all(t_data *data)
 {
 	int		i;
 
@@ -20,16 +20,22 @@ int	finish(t_data *data)
 	if (data->map->map != NULL)
 	{
 		while (data->map->map[i] != NULL)
-		{
-			free(data->map->map[i]);
-			i++;
-		}
+			free(data->map->map[i++]);
 		free(data->map->map);
 	}
-	clear_array_img(data->game, data->map->sprites_array);
+	if (data->map->sprites_array)
+		clear_array_img(data->game, data->map->sprites_array);
+	if (data->map->img_map)
+		free_image(data->game, data->map->img_map);
+	if (data->game->win_ptr)
+		mlx_destroy_window(data->game->mlx_ptr, data->game->win_ptr);
 	mlx_destroy_display(data->game->mlx_ptr);
-	mlx_destroy_window(data->game->mlx_ptr, data->game->win_ptr);
 	free(data->game->mlx_ptr);
+}
+
+int	finish(t_data *data)
+{
+	free_all(data);
 	exit(0);
 	return (1);
 }
@@ -77,23 +83,16 @@ int	exit_check(t_map *map)
 
 int	map_check(t_map *map, t_game *game)
 {
-	letter_number_check(map, 0, 0);
-	if (!map->map)
+	if (!map->map || !map->map[0])
 		return (0);
-	else if (!rectangle_check(map) || map->spawn > 1 || map->exit > 1
+	letter_number_check(map, 0, 0);
+	if (!rectangle_check(map) || map->spawn > 1 || map->exit > 1
 		|| map->item == 0 || map->valid == 0 || !wall_check(map)
 		|| !exit_check(map))
-	{
-		ft_printf("La map doit respecter les regles de l'énoncé\n");
-	}
-	else
-	{
-		ft_printf("Map is valid\n");
-		game->perso_x = (map->pos_p[1] * game->width);
-		game->perso_y = (map->pos_p[0] * game->height);
-		game->marge_x = (game->width / 2) - (game->perso_width / 2);
-		game->marge_y = (game->height / 2) - (game->perso_height / 2);
-		return (1);
-	}
-	return (0);
+		return (0);
+	game->perso_x = (map->pos_p[1] * game->width);
+	game->perso_y = (map->pos_p[0] * game->height);
+	game->marge_x = (game->width / 2) - (game->perso_width / 2);
+	game->marge_y = (game->height / 2) - (game->perso_height / 2);
+	return (1);
 }
